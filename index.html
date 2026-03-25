@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Spesial buat Kak Lim</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --envelope-color: #f3efdc; /* Broken White */
+            --envelope-outline: #c5c0a5; /* Warna garis tepi */
+            --heart-color: #7a0000; /* Merah Gelap */
+            --paper-color: #ffffff;
+            --text-color: #2c2c2c;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #250101 0%, #050505 100%);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- Envelope Structure --- */
+        .envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background-color: var(--envelope-color);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            perspective: 1000px;
+            border: 1px solid var(--envelope-outline); /* Outline luar */
+        }
+
+        /* Penutup Atas (Flap) */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            /* Membuat Segitiga */
+            border-top: 130px solid var(--envelope-color);
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            transform-origin: top;
+            transition: transform 0.7s ease, z-index 0.3s;
+            z-index: 5;
+            /* Outline segitiga menggunakan drop-shadow agar mengikuti bentuk diagonal */
+            filter: drop-shadow(0 -1px 0px var(--envelope-outline)) 
+                    drop-shadow(1px 0 0px var(--envelope-outline))
+                    drop-shadow(-1px 0 0px var(--envelope-outline));
+        }
+
+        /* Segel Hati */
+        .heart-seal {
+            position: absolute;
+            /* Diturunkan posisinya agar pas di ujung flap */
+            top: -10px; 
+            left: -18px;
+            width: 36px;
+            height: 36px;
+            background-color: var(--heart-color);
+            transform: rotate(-45deg);
+            cursor: pointer;
+            z-index: 6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            transition: transform 0.5s ease, opacity 0.5s;
+        }
+
+        .heart-seal::before,
+        .heart-seal::after {
+            content: "";
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background-color: var(--heart-color);
+            border-radius: 50%;
+        }
+
+        .heart-seal::before { top: -18px; left: 0; }
+        .heart-seal::after { left: 18px; top: 0; }
+
+        /* Saku Depan (Pocket) */
+        .pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid var(--envelope-color);
+            border-right: 160px solid var(--envelope-color);
+            border-bottom: 110px solid var(--envelope-color);
+            z-index: 4;
+            /* Garis pembatas lipatan saku */
+            filter: drop-shadow(0 -1px 0.5px var(--envelope-outline));
+        }
+
+        /* Bagian belakang dalam amplop */
+        .pocket::after {
+            content: '';
+            position: absolute;
+            bottom: -110px;
+            left: -160px;
+            width: 320px;
+            height: 220px;
+            background: var(--envelope-color);
+            z-index: -1;
+        }
+
+        /* --- Paper --- */
+        .paper {
+            position: absolute;
+            bottom: 15px;
+            left: 10px;
+            width: 300px;
+            height: 190px;
+            background: var(--paper-color);
+            padding: 30px;
+            box-sizing: border-box;
+            z-index: 3;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.5s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .paper p {
+            font-size: 15px;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.8s;
+        }
+
+        /* --- Tombol Open --- */
+        .open-btn {
+            margin-top: 60px;
+            padding: 12px 45px;
+            background-color: var(--heart-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        .open-btn:hover {
+            background-color: #a00000;
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(122, 0, 0, 0.5);
+        }
+
+        /* --- Animation --- */
+        .container.is-open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .container.is-open .heart-seal {
+            opacity: 0;
+            transform: rotate(-45deg) scale(0);
+        }
+
+        .container.is-open .paper {
+            transform: translateY(-80px);
+            height: 280px;
+            z-index: 6;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .container.is-open .paper p {
+            opacity: 1;
+        }
+
+        .container.is-open .open-btn {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <div class="envelope-wrapper">
+            <div class="flap">
+                <div class="heart-seal"></div>
+            </div>
+            
+            <div class="paper">
+                <p>
+                    <span style="font-weight: bold; font-size: 1.2rem; color: var(--heart-color);">For: Kak Lim.</span><br><br>
+                    Otsu kakk. Seneng banget akhirnya bisa ketemu lagi sama Kak Lim. 
+                    Semangat terus ya kak, semoga kita bisa ketemu lagi di event berikutnyaa!
+                    <br><br>
+                    <span style="color: var(--heart-color); font-size: 1.5rem;">♥</span>
+                </p>
+            </div>
+
+            <div class="pocket"></div>
+        </div>
+
+        <button class="open-btn" onclick="openSurat()">Open</button>
+    </div>
+
+    <script>
+        function openSurat() {
+            document.getElementById('mainContainer').classList.add('is-open');
+        }
+    </script>
+</body>
+</html>
